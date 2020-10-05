@@ -26,32 +26,36 @@ giData1 = giData1{:,:};
 rData1 = rData1{:,:};
 
 
+%To calc the Radius of Gyration, herein referred to as ROG, is composed of scaling each component. X, Y, then Z.
 
 %%bData%%
 
 %x-comp for ROG b
-row = 1;
-while row < length(bData(:,1))
-    xCol = 1;
-    ROGx = 0;
-    XMean= mean([bData(row,1:3:end)]);
+row = 1; %Setting the row to be the first row in the .csv dataset.
+while row < length(bData(:,1)) %We start the main while loop which operates as the row mechanic. We need to do the following process of scaling by radius of gyration one row at a time.
+    xCol = 1; %Notice that every col in the dataset repeats on a three step bases. The first col will be X, the next would be the fourth col, and so on.
+    ROGx = 0; %Init the ROG of the x-comp to zero.
+    XMean= mean([bData(row,1:3:end)]); %To calc the ROG we need the average of all x-comp within that structure.
     
-    sum_array = [];
+    %Here is the formula I used for the ROG value: https://wikimedia.org/api/rest_v1/media/math/render/svg/dac6e30de208e2ce2cf9940d8fab518ab6070b24
+    
+    sum_array = []; %create array for summed x-comp.
     count = 1;
-    while xCol <= 100
-        sum_array(count) = abs(((bData(row,xCol))-(XMean))^2);
-        xCol = xCol +3;
+    while xCol <= 100 %Start while loop which calc the (r - rAvg)^2 for the given row for Y-comp.
+        sum_array(count) = abs(((bData(row,xCol))-(XMean))^2); 
+        xCol = xCol +3; %Skip to next x-comp, since they are on a every three count.
         count = count +1;
     end
     
-    summed = sum(sum_array);
-    xCol = 1;
-    while xCol <= 100
-        ROGx = sqrt((1/100)*(summed));
-        bData1(row,xCol) = ((bData(row,xCol))/(ROGx));
+    summed = sum(sum_array); %We now sum the array, thus the Sigma in the above formula.
+    xCol = 1; %Init the xCol to 1 again.
+    while xCol <= 100 %While loop calc the sqrt(1/N * Summed) part of the above formula
+        ROGx = sqrt((1/100)*(summed)); %We now have the ROG value for that row of ONLY X-comp
+        bData1(row,xCol) = ((bData(row,xCol))/(ROGx)); %Now we divide the x-comp of that row by the given ROG value.
         
         xCol = xCol + 3;
     end
+    
     %return to start to go to next row.
 row = row+1;
 end
@@ -62,7 +66,8 @@ end
 
 
 %y-comp for ROG
-
+%Now we do the same thing but instead of starting at col 1 in the first while loop we start with the second col (Ycol). And because x,y,z is spread out evenly, we can do the same as above.
+%Just remember we have to init all yCol values as 2 not 1
 row = 1;
 while row < length(bData(:,1))
     yCol = 2;
@@ -89,6 +94,8 @@ while row < length(bData(:,1))
 row = row+1;
 end
 
+%Now we do the same thing but instead of starting at col 1, or 2, in the first while loop we start with the third col (Zcol). And because x,y,z is spread out evenly, we can do the same as above.
+%Just remember we have to init all zCol values as 3.
 
 %z-comp of bData
 
@@ -118,7 +125,9 @@ while row < length(bData(:,1))
 row = row+1;
 end
 
+%Now if you got that down, then just do the above code, but call for cData rather than bData. And then do the same for the following types.
 
+%There are no special cases for different types. It is all redundant. Just remember to Init the col correctly.
 
 %%%%%%%%cData%%%%%%%%
 
